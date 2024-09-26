@@ -21,7 +21,7 @@ class MapScreen extends StatefulWidget {
   static Future<void> enableLocation(BuildContext context) async {
     _MapScreenState? mapState = context.findAncestorStateOfType<_MapScreenState>();
     if (mapState != null) {
-      await mapState._enableLocation();
+      await mapState._requestLocationPermission(context);
     }
   }
 
@@ -30,7 +30,6 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  late GoogleMapController _mapController;
   final Set<Polyline> _polylines = {};
   final Set<Marker> _markers = {};
   LatLng? _currentLocation;
@@ -41,33 +40,41 @@ class _MapScreenState extends State<MapScreen> {
     _setMarkersAndPolyline();
   }
 
-  Future<void> _enableLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
+  Future<void> _requestLocationPermission(BuildContext context) async {
     LocationPermission permission = await Geolocator.checkPermission();
+
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
+      if (permission == LocationPermission.deniedForever) {
+        _showSnackBar(context, 'Los permisos fueron denegados permanentemente.');
+        return;
       }
     }
 
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    setState(() {
-      _currentLocation = LatLng(position.latitude, position.longitude);
-      _setMarkersAndPolyline();
-    });
+    if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+      _getCurrentLocation(context);
+    } else {
+      _showSnackBar(context, 'Permisos de ubicación denegados.');
+    }
+  }
+
+  Future<void> _getCurrentLocation(BuildContext context) async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      setState(() {
+        _currentLocation = LatLng(position.latitude, position.longitude);
+        _setMarkersAndPolyline();
+      });
+      _showSnackBar(context, 'Ubicación obtenida: ${position.latitude}, ${position.longitude}');
+    } catch (e) {
+      _showSnackBar(context, 'Error al obtener la ubicación: $e');
+    }
   }
 
   void _setMarkersAndPolyline() {
     _markers.clear();
     _polylines.clear();
 
-    // Crear marcadores para cada estación
     for (var station in widget.allStations) {
       final markerColor = station['name'] == widget.stationName
           ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet)
@@ -85,7 +92,6 @@ class _MapScreenState extends State<MapScreen> {
       );
     }
 
-    // Marcar la ubicación actual del usuario
     if (_currentLocation != null) {
       _markers.add(
         Marker(
@@ -96,7 +102,6 @@ class _MapScreenState extends State<MapScreen> {
         ),
       );
 
-      // Encontrar la estación más cercana
       final nearestStation = _findNearestStation(_currentLocation!);
       if (nearestStation != null) {
         _polylines.add(
@@ -131,6 +136,32 @@ class _MapScreenState extends State<MapScreen> {
     return nearestStation;
   }
 
+  LatLngBounds _calculateBounds() {
+    double south = double.infinity;
+    double north = -double.infinity;
+    double west = double.infinity;
+    double east = -double.infinity;
+
+    for (var station in widget.allStations) {
+      final LatLng position = station['location'];
+      if (position.latitude < south) south = position.latitude;
+      if (position.latitude > north) north = position.latitude;
+      if (position.longitude < west) west = position.longitude;
+      if (position.longitude > east) east = position.longitude;
+    }
+
+    return LatLngBounds(
+      southwest: LatLng(south, west),
+      northeast: LatLng(north, east),
+    );
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
@@ -141,7 +172,9 @@ class _MapScreenState extends State<MapScreen> {
       markers: _markers,
       polylines: _polylines,
       onMapCreated: (controller) {
-        _mapController = controller;
+        controller.animateCamera(
+          CameraUpdate.newLatLngBounds(_calculateBounds(), 50),
+        );
       },
     );
   }

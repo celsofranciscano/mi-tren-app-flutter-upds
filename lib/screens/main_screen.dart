@@ -6,6 +6,7 @@ import 'green_line.dart';
 import 'payments_screen.dart';
 import 'user_profile_screen.dart';
 import '../widgets/train_route_selector.dart';
+import '../widgets/stations_data.dart'; // Importa el archivo con las estaciones
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -83,37 +84,66 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'lib/assets/logotren.png', // Cambia a la ruta de tu logo
+              width: 50,
+              height: 50,
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'Mi Tren',
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.blue,
+      ),
       backgroundColor: Colors.white,
-      body: Stack(
+      body: Column(
         children: [
-          // Mapa que ocupa el 40% de la pantalla
-          Container(
-            height: MediaQuery.of(context).size.height * 0.40,
-            child: MapScreen(
-              stationName: 'Estación Central San Antonio',
-              stationLocation: LatLng(-17.411778, -66.154444),
-              allStations: const [
-                {'name': 'Estación Central San Antonio', 'location': LatLng(-17.411778, -66.154444)},
-                {'name': 'El Arco', 'location': LatLng(-17.423583, -66.154222)},
+          Expanded(
+            child: Stack(
+              children: [
+                // Mapa que ocupa el 40% de la pantalla
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.40,
+                  width: MediaQuery.of(context).size.width,
+                  child: MapScreen(
+                    stationName: 'Estación Central San Antonio',
+                    stationLocation: LatLng(-17.411778, -66.154444),
+                    allStations: redLineStations + greenLineStations, // Importa todas las estaciones
+                    selectedLine: 'Línea Roja',
+                  ),
+                ),
+
+                // Botón para habilitar la ubicación encima del mapa
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      // Llamar directamente a la solicitud de permisos de ubicación
+                      MapScreen.enableLocation(context);
+                    },
+                    child: const Icon(Icons.my_location),
+                  ),
+                ),
               ],
-              selectedLine: 'Línea Roja',
             ),
           ),
-          // Botón para habilitar la ubicación
-          Positioned(
-            top: 20,
-            right: 20,
-            child: FloatingActionButton(
-              onPressed: () {
-                // Habilitar la ubicación en el MapScreen
-                MapScreen.enableLocation(context);
-              },
-              child: const Icon(Icons.my_location),
+
+          const SizedBox(height: 20),
+
+          // Aquí se restaura el TrainRouteSelector
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: const TrainRouteSelector(),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: const TrainRouteSelector(),
           ),
         ],
       ),

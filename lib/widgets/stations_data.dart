@@ -1,0 +1,41 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+final List<Map<String, dynamic>> redLineStations = [
+  {'name': 'Estación Central San Antonio', 'location': LatLng(-17.411778, -66.154444)},
+  {'name': 'El Arco', 'location': LatLng(-17.423583, -66.154222)},
+  {'name': 'Santa Bárbara', 'location': LatLng(-17.428750, -66.152250)},
+  {'name': 'Alejo Calatayud', 'location': LatLng(-17.434083, -66.148611)},
+  {'name': 'OTB Universitario', 'location': LatLng(-17.440222, -66.144417)},
+  {'name': 'Politécnico', 'location': LatLng(-17.444694, -66.139500)},
+  {'name': 'El Molino', 'location': LatLng(-17.447194, -66.135167)},
+  {'name': 'Estación UMSS Agronomía', 'location': LatLng(-17.451333, -66.129972)},
+  {'name': 'Santa Vera Cruz', 'location': LatLng(-17.459694, -66.123861)},
+  {'name': 'Kiñiloma (En construcción)', 'location': LatLng(-17.466417, -66.118500)},
+];
+
+final List<Map<String, dynamic>> greenLineStations = [
+  {'name': 'Estación Central San Antonio', 'location': LatLng(-17.411778, -66.154444)},
+  {'name': 'Cementerio', 'location': LatLng(-17.411194, -66.160972)},
+  {'name': 'Aeropuerto', 'location': LatLng(-17.407500, -66.168722)},
+  {'name': 'Parque Mariscal Santa Cruz', 'location': LatLng(-17.402333, -66.178750)},
+  {'name': 'Beijing', 'location': LatLng(-17.400500, -66.187639)},
+  {'name': 'Villa Busch', 'location': LatLng(-17.400278, -66.195667)},
+  {'name': 'Señora de La Merced', 'location': LatLng(-17.399889, -66.208417)},
+  {'name': 'Santa Rosa', 'location': LatLng(-17.399556, -66.219917)},
+  {'name': 'Barrio Ferroviario', 'location': LatLng(-17.399278, -66.229472)},
+  {'name': 'Estación Colcapirhua', 'location': LatLng(-17.398972, -66.243194)},
+  {'name': 'Piñami', 'location': LatLng(-17.398639, -66.252417)},
+  {'name': 'Cotapachi', 'location': LatLng(-17.398722, -66.265556)},
+  {'name': 'Avenida Ferroviaria', 'location': LatLng(-17.400889, -66.274167)},
+  {'name': 'Estación Quillacollo', 'location': LatLng(-17.402056, -66.281806)},
+  {'name': 'Cementerio de Quillacollo', 'location': LatLng(-17.401833, -66.292611)},
+  {'name': 'Miguel Mercado', 'location': LatLng(-17.401611, -66.302222)},
+  {'name': 'Estación Vinto', 'location': LatLng(-17.399194, -66.316472)},
+  {'name': 'Río Khora', 'location': LatLng(-17.403306, -66.323417)},
+  {'name': 'Vinto Chico', 'location': LatLng(-17.414806, -66.326111)},
+  {'name': 'Cruce Payacollo', 'location': LatLng(-17.431194, -66.327583)},
+  {'name': 'Río Viloma', 'location': LatLng(-17.440528, -66.328333)},
+  {'name': 'Sorata Huancarani', 'location': LatLng(-17.453389, -66.330111)},
+  {'name': 'Pueblo Nuevo', 'location': LatLng(-17.464417, -66.331389)},
+  {'name': 'Estación Suticollo', 'location': LatLng(-17.473306, -66.331667)},
+];
