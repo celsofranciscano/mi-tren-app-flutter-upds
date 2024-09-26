@@ -35,6 +35,27 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: _currentIndex == 0 // AppBar solo en la pantalla principal
+          ? AppBar(
+              automaticallyImplyLeading: false, // Elimina la flecha de retroceso
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'lib/assets/logotren.png', // Cambia a la ruta de tu logo
+                    width: 50,
+                    height: 50,
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'Mi Tren',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.blue,
+            )
+          : null, // Sin AppBar en otras pantallas
       body: _screens[_currentIndex],
       backgroundColor: Colors.white,
       bottomNavigationBar: Container(
@@ -84,24 +105,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'lib/assets/logotren.png', // Cambia a la ruta de tu logo
-              width: 50,
-              height: 50,
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'Mi Tren',
-              style: TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.blue,
-      ),
       backgroundColor: Colors.white,
       body: Column(
         children: [

@@ -44,7 +44,12 @@ class _TicketSelectionScreenState extends State<TicketSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Seleccionar Tipo de Ticket - ${widget.selectedLine}'),
+        title: Text(
+          'Pagar - ${widget.selectedLine}',
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.blue, // Fondo azul
+        iconTheme: const IconThemeData(color: Colors.white), // Icono en blanco
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -56,88 +61,55 @@ class _TicketSelectionScreenState extends State<TicketSelectionScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            // Sección de selección de tickets con contador
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('General - ${generalPrice} Bs'),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          if (generalTicketCount > 0) generalTicketCount--;
-                        });
-                      },
-                      icon: const Icon(Icons.remove_circle),
-                    ),
-                    Text('$generalTicketCount'),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          generalTicketCount++;
-                        });
-                      },
-                      icon: const Icon(Icons.add_circle),
-                    ),
-                  ],
-                ),
-              ],
+            // Sección de selección de tickets con íconos y contador
+            _buildTicketSelector(
+              Icons.directions_walk, 
+              'General', 
+              generalPrice, 
+              generalTicketCount, 
+              () {
+                setState(() {
+                  if (generalTicketCount > 0) generalTicketCount--;
+                });
+              }, 
+              () {
+                setState(() {
+                  generalTicketCount++;
+                });
+              }
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Preferencia - ${preferencePrice} Bs'),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          if (preferenceTicketCount > 0) preferenceTicketCount--;
-                        });
-                      },
-                      icon: const Icon(Icons.remove_circle),
-                    ),
-                    Text('$preferenceTicketCount'),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          preferenceTicketCount++;
-                          showPreferenceInfo = true;  // Mostrar información para "Preferencia"
-                        });
-                      },
-                      icon: const Icon(Icons.add_circle),
-                    ),
-                  ],
-                ),
-              ],
+            _buildTicketSelector(
+              Icons.accessibility_new, 
+              'Preferencia', 
+              preferencePrice, 
+              preferenceTicketCount, 
+              () {
+                setState(() {
+                  if (preferenceTicketCount > 0) preferenceTicketCount--;
+                });
+              }, 
+              () {
+                setState(() {
+                  preferenceTicketCount++;
+                  showPreferenceInfo = true;  // Mostrar información para "Preferencia"
+                });
+              }
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Escolar - ${schoolPrice} Bs'),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          if (schoolTicketCount > 0) schoolTicketCount--;
-                        });
-                      },
-                      icon: const Icon(Icons.remove_circle),
-                    ),
-                    Text('$schoolTicketCount'),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          schoolTicketCount++;
-                        });
-                      },
-                      icon: const Icon(Icons.add_circle),
-                    ),
-                  ],
-                ),
-              ],
+            _buildTicketSelector(
+              Icons.school, 
+              'Escolar', 
+              schoolPrice, 
+              schoolTicketCount, 
+              () {
+                setState(() {
+                  if (schoolTicketCount > 0) schoolTicketCount--;
+                });
+              }, 
+              () {
+                setState(() {
+                  schoolTicketCount++;
+                });
+              }
             ),
             const SizedBox(height: 20),
             // Mensaje explicativo para Preferencia
@@ -174,25 +146,10 @@ class _TicketSelectionScreenState extends State<TicketSelectionScreen> {
             // Botón Confirmar Compra
             ElevatedButton(
               onPressed: () {
-                final totalTickets = generalTicketCount + preferenceTicketCount + schoolTicketCount;
-                final totalAmount = (generalTicketCount * generalPrice) +
-                                    (preferenceTicketCount * preferencePrice) +
-                                    (schoolTicketCount * schoolPrice);
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Compra confirmada para $totalTickets ticket(s):\n'
-                      'Línea: ${widget.selectedLine}\n'
-                      'Origen: ${widget.originStation}\n'
-                      'Destino: ${widget.destinationStation}\n'
-                      'Total: $totalAmount Bs.',
-                    ),
-                  ),
-                );
+                _showPurchaseSummary(context);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
+                backgroundColor: Colors.blue, // Botón azul
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -200,12 +157,155 @@ class _TicketSelectionScreenState extends State<TicketSelectionScreen> {
               ),
               child: const Text(
                 'Confirmar Compra',
-                style: TextStyle(fontSize: 18, color: Colors.white),
+                style: TextStyle(fontSize: 18, color: Colors.white), // Texto en blanco
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  // Método para construir un selector de tickets con icono y contador
+  Widget _buildTicketSelector(IconData icon, String type, double price, int count, VoidCallback onDecrement, VoidCallback onIncrement) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: Colors.blue), // Icono azul
+            const SizedBox(width: 10),
+            Text('$type - $price Bs'),
+          ],
+        ),
+        Row(
+          children: [
+            IconButton(
+              onPressed: onDecrement,
+              icon: const Icon(Icons.remove_circle, color: Colors.blue),
+            ),
+            Text('$count'),
+            IconButton(
+              onPressed: onIncrement,
+              icon: const Icon(Icons.add_circle, color: Colors.blue),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Método para mostrar el modal con el resumen de compra
+  void _showPurchaseSummary(BuildContext context) {
+    final totalTickets = generalTicketCount + preferenceTicketCount + schoolTicketCount;
+    final totalAmount = (generalTicketCount * generalPrice) +
+                        (preferenceTicketCount * preferencePrice) +
+                        (schoolTicketCount * schoolPrice);
+
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Resumen de Compra',
+                style: TextStyle(
+                  fontSize: 22, 
+                  fontWeight: FontWeight.bold, 
+                  color: Colors.blue
+                ),
+              ),
+              const Divider(),
+              Row(
+                children: [
+                  const Icon(Icons.train, color: Colors.blue),
+                  const SizedBox(width: 10),
+                  Text('Línea: ${widget.selectedLine}', style: const TextStyle(fontSize: 16)),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Icon(Icons.location_on, color: Colors.blue),
+                  const SizedBox(width: 10),
+                  Text('Origen: ${widget.originStation}', style: const TextStyle(fontSize: 16)),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Icon(Icons.flag, color: Colors.blue),
+                  const SizedBox(width: 10),
+                  Text('Destino: ${widget.destinationStation}', style: const TextStyle(fontSize: 16)),
+                ],
+              ),
+              const Divider(),
+              _buildTicketDetail(Icons.directions_walk, 'General', generalTicketCount, generalPrice),
+              _buildTicketDetail(Icons.accessibility_new, 'Preferencia', preferenceTicketCount, preferencePrice),
+              _buildTicketDetail(Icons.school, 'Escolar', schoolTicketCount, schoolPrice),
+              const Divider(),
+              Text(
+                'Total: $totalAmount Bs',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context); // Cierra el modal
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Compra confirmada para $totalTickets ticket(s):\nTotal: $totalAmount Bs.',
+                      ),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue, // Botón azul
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Confirmar',
+                  style: TextStyle(fontSize: 18, color: Colors.white), // Texto en blanco
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Construir detalles de tickets para el modal
+  Widget _buildTicketDetail(IconData icon, String ticketType, int count, double price) {
+    if (count > 0) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: Colors.blue),
+                const SizedBox(width: 10),
+                Text('$ticketType x $count'),
+              ],
+            ),
+            Text('${count * price} Bs'),
+          ],
+        ),
+      );
+    }
+    return const SizedBox();
   }
 }

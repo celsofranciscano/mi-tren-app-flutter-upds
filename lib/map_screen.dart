@@ -74,7 +74,12 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mapa - ${widget.stationName}'),
+        backgroundColor: Colors.blue, // Fondo azul
+        title: Text(
+          'Mapa - ${widget.stationName}',
+          style: const TextStyle(color: Colors.white), // Texto en blanco
+        ),
+        iconTheme: const IconThemeData(color: Colors.white), // Íconos en blanco
       ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
