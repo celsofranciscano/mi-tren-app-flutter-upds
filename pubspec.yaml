@@ -1,0 +1,56 @@
+name: mitren # Reemplaza con el nombre de tu proyecto
+description: A new Flutter project.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Iconos predeterminados de Flutter para iOS
+  cupertino_icons: ^1.0.2
+
+  # Tus dependencias adicionales
+  google_maps_flutter: ^2.2.0
+  geolocator: ^8.0.0  # Para obtener la ubicación del usuario
+  intl: ^0.17.0
+  sqflite: ^2.2.5
+  path: ^1.8.3
+  crypto: ^3.0.1  # Añadir esta línea para el hasheo de contraseñas
+  # Añade cualquier otra dependencia que tengas
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  # Para análisis de código
+  flutter_lints: ^2.0.0
+  # Para generar los iconos de la aplicación
+  flutter_launcher_icons: ^0.9.2
+
+flutter:
+  uses-material-design: true
+
+  # Declaración de los assets (imágenes, íconos, etc.)
+  assets:
+    - lib/assets/  # Asegúrate de que esta ruta coincida con la ubicación de tus assets
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "lib/assets/logotren.png" # Ruta a tu ícono, asegúrate de que la imagen esté en la carpeta correcta
+
+# Puedes descomentar la siguiente sección si estás utilizando fuentes personalizadas
+# fonts:
+#   - family: Roboto
+#     fonts:
+#       - asset: fonts/Roboto-Regular.ttf
+#       - asset: fonts/Roboto-Bold.ttf
+#         weight: 700
+#   - family: OpenSans
+#     fonts:
+#       - asset: fonts/OpenSans-Regular.ttf
+#       - asset: fonts/OpenSans-Bold.ttf
+#         weight: 700
